@@ -9,7 +9,10 @@ import utils.EMF_Creator;
 import facades.PersonFacade;
 import java.util.List;
 import javax.persistence.EntityManagerFactory;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -48,12 +51,29 @@ public class PersonResource {
         PersonsDTO allpersons = FACADE.getAllPersons();
         return GSON.toJson(allpersons);
     }
-    
+
     @GET
     @Path("/{id}")
     @Produces({MediaType.APPLICATION_JSON})
     public String getJokeById(@PathParam("id") int id) {
         PersonDTO joke = FACADE.getPerson(id);
         return GSON.toJson(joke);
+    }
+
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public String addPerson(String person) {
+        PersonDTO p = GSON.fromJson(person, PersonDTO.class);
+        PersonDTO newP = FACADE.addPerson(p.getfName(), p.getlName(), p.getPhone());
+        return GSON.toJson(newP);
+    }
+    
+    @DELETE
+    @Produces({MediaType.APPLICATION_JSON})
+    @Path("{id}")
+    public String deletePerson(@PathParam("id") int id){
+        PersonDTO person = FACADE.deletePerson(id);
+        return GSON.toJson(person);
     }
 }

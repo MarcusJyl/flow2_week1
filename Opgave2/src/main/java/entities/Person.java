@@ -7,10 +7,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQuery;
+import javax.persistence.Temporal;
 
 
 @Entity
-@NamedQuery(name = "RenameMe.deleteAllRows", query = "DELETE from RenameMe")
+@NamedQuery(name = "Person.deleteAllRows", query = "DELETE from Person")
 public class Person implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -20,7 +21,9 @@ public class Person implements Serializable {
     private String firstName;
     private String lastName;
     private String phone;
+    @Temporal(javax.persistence.TemporalType.DATE)
     private Date created;
+    @Temporal(javax.persistence.TemporalType.DATE)
     private Date lastEdited;
     
     
@@ -28,7 +31,7 @@ public class Person implements Serializable {
     public Person() {
     }
 
-    public Person(String firstName, String lastName, String phone, Date created, Date lastEdited) {
+    public Person(String firstName, String lastName, String phone) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.phone = phone;

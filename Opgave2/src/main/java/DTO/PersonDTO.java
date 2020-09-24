@@ -17,6 +17,7 @@ public class PersonDTO {
     private String fName;
     private String lName;
     private String phone;
+    
     public PersonDTO(Person p) {
         this.fName = p.getFirstName();
         this.lName = p.getLastName();
@@ -29,6 +30,38 @@ public class PersonDTO {
         this.phone = phone;        
     }
     public PersonDTO() {}
-        // getters setters hashcode and equals 
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public String getfName() {
+        return fName;
+    }
+
+    public void setfName(String fName) {
+        this.fName = fName;
+    }
+
+    public String getlName() {
+        return lName;
+    }
+
+    public void setlName(String lName) {
+        this.lName = lName;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+        
 }
 

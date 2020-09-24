@@ -22,9 +22,8 @@ public class PersonFacade implements IPersonFacade {
     private PersonFacade() {
     }
 
-     
     /**
-     * 
+     *
      * @param _emf
      * @return an instance of this facade class.
      */
@@ -54,12 +53,30 @@ public class PersonFacade implements IPersonFacade {
 
     @Override
     public PersonDTO addPerson(String fName, String lName, String phone) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        EntityManager em = emf.createEntityManager();
+        Person person = new Person(fName, lName, phone);
+        try {
+            em.getTransaction().begin();
+            em.persist(person);
+            em.getTransaction().commit();
+        } finally {
+            em.close();
+        }
+        return new PersonDTO(person);
     }
 
     @Override
     public PersonDTO deletePerson(int id) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        EntityManager em = emf.createEntityManager();
+        Person person = em.find(Person.class, id);
+        try{
+            em.getTransaction().begin();
+            em.remove(person);
+            em.getTransaction().commit();
+            return new PersonDTO(person);
+        }finally{
+            em.close();
+        }
     }
 
     @Override
@@ -77,7 +94,7 @@ public class PersonFacade implements IPersonFacade {
 
     @Override
     public PersonsDTO getAllPersons() {
-            EntityManager em = emf.createEntityManager();
+        EntityManager em = emf.createEntityManager();
         try {
             Query query = em.createQuery("SELECT p FROM Person p");
             List<Person> persons = query.getResultList();
@@ -87,7 +104,6 @@ public class PersonFacade implements IPersonFacade {
             em.close();
         }
     }
-    
 
     @Override
     public PersonDTO editPerson(PersonDTO p) {
