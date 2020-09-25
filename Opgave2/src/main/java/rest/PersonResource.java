@@ -5,9 +5,13 @@ import DTO.PersonsDTO;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import entities.Person;
+import exceptinos.PersonNotFoundException;
+import exceptinos.PersonNotFoundExceptionMapper;
 import utils.EMF_Creator;
 import facades.PersonFacade;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.persistence.EntityManagerFactory;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -56,33 +60,34 @@ public class PersonResource {
     @GET
     @Path("/{id}")
     @Produces({MediaType.APPLICATION_JSON})
-    public String getJokeById(@PathParam("id") int id) {
+    public String getJokeById(@PathParam("id") int id) throws PersonNotFoundException {
         PersonDTO joke = FACADE.getPerson(id);
         return GSON.toJson(joke);
     }
 
     @POST
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces({MediaType.APPLICATION_JSON})
+    @Consumes({MediaType.APPLICATION_JSON})
     public String addPerson(String person) {
         PersonDTO p = GSON.fromJson(person, PersonDTO.class);
-        PersonDTO newP = FACADE.addPerson(p.getfName(), p.getlName(), p.getPhone());
-        return GSON.toJson(newP);
+        PersonDTO pNew = FACADE.addPerson(p.getfName(), p.getlName(), p.getPhone());
+        
+        return GSON.toJson(pNew);
     }
-    
+
     @DELETE
     @Produces({MediaType.APPLICATION_JSON})
     @Path("{id}")
-    public String deletePerson(@PathParam("id") int id){
+    public String deletePerson(@PathParam("id") int id) throws PersonNotFoundException {
         PersonDTO person = FACADE.deletePerson(id);
         return GSON.toJson(person);
     }
-    
+
     @PUT
     @Produces({MediaType.APPLICATION_JSON})
     @Consumes({MediaType.APPLICATION_JSON})
     @Path("{id}")
-    public String editPerson(String person, @PathParam("id") int id) {
+    public String editPerson(String person, @PathParam("id") int id) throws PersonNotFoundException {
         PersonDTO p = GSON.fromJson(person, PersonDTO.class);
         p.setId(id);
         PersonDTO pEdited = FACADE.editPerson(p);

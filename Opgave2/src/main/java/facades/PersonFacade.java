@@ -3,10 +3,10 @@ package facades;
 import DTO.PersonDTO;
 import DTO.PersonsDTO;
 import entities.Person;
+import exceptinos.PersonNotFoundException;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
 import javax.persistence.Query;
 
 /**
@@ -66,27 +66,35 @@ public class PersonFacade implements IPersonFacade {
     }
 
     @Override
-    public PersonDTO deletePerson(int id) {
+    public PersonDTO deletePerson(int id) throws PersonNotFoundException {
         EntityManager em = emf.createEntityManager();
-        Person person = em.find(Person.class, id);
-        try{
-            em.getTransaction().begin();
-            em.remove(person);
-            em.getTransaction().commit();
-            return new PersonDTO(person);
-        }finally{
+        try {
+            Person person = em.find(Person.class, id);
+            if (person == null) {
+                throw new PersonNotFoundException(String.format("The provided id does not exist %d", id));
+            } else {
+
+                em.getTransaction().begin();
+                em.remove(person);
+                em.getTransaction().commit();
+                return new PersonDTO(person);
+            }
+        } finally {
             em.close();
         }
     }
 
     @Override
-    public PersonDTO getPerson(int id) {
+    public PersonDTO getPerson(int id) throws PersonNotFoundException {
         EntityManager em = emf.createEntityManager();
         try {
-            Query query = em.createQuery("SELECT p FROM Person p WHERE p.id = :id");
-            query.setParameter("id", id);
-            Person person = (Person) query.getSingleResult();
-            return new PersonDTO(person);
+            Person person = em.find(Person.class, id);
+            if (person == null) {
+                throw new PersonNotFoundException("could not find requested person");
+            } else {
+                return new PersonDTO(person);
+            }
+
         } finally {
             em.close();
         }
@@ -106,17 +114,20 @@ public class PersonFacade implements IPersonFacade {
     }
 
     @Override
-    public PersonDTO editPerson(PersonDTO p) {
-       EntityManager em = emf.createEntityManager();
-        Person person = em.find(Person.class, p.getId());
-        try{
+    public PersonDTO editPerson(PersonDTO p) throws PersonNotFoundException {
+        EntityManager em = emf.createEntityManager();
+        try {
             em.getTransaction().begin();
+            Person person = em.find(Person.class, p.getId());
+            if (person == null) {
+                throw new PersonNotFoundException("the requested person does not exist");
+            }
             person.setFirstName(p.getfName());
             person.setLastName(p.getlName());
-            person.setPhone(p.getPhone());            
+            person.setPhone(p.getPhone());
             em.getTransaction().commit();
             return new PersonDTO(person);
-        }finally{
+        } finally {
             em.close();
         }
     }
