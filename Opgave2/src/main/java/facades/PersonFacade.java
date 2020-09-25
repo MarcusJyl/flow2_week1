@@ -107,7 +107,18 @@ public class PersonFacade implements IPersonFacade {
 
     @Override
     public PersonDTO editPerson(PersonDTO p) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+       EntityManager em = emf.createEntityManager();
+        Person person = em.find(Person.class, p.getId());
+        try{
+            em.getTransaction().begin();
+            person.setFirstName(p.getfName());
+            person.setLastName(p.getlName());
+            person.setPhone(p.getPhone());            
+            em.getTransaction().commit();
+            return new PersonDTO(person);
+        }finally{
+            em.close();
+        }
     }
 
 }

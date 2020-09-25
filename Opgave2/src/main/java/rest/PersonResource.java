@@ -13,6 +13,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -75,5 +76,16 @@ public class PersonResource {
     public String deletePerson(@PathParam("id") int id){
         PersonDTO person = FACADE.deletePerson(id);
         return GSON.toJson(person);
+    }
+    
+    @PUT
+    @Produces({MediaType.APPLICATION_JSON})
+    @Consumes({MediaType.APPLICATION_JSON})
+    @Path("{id}")
+    public String editPerson(String person, @PathParam("id") int id) {
+        PersonDTO p = GSON.fromJson(person, PersonDTO.class);
+        p.setId(id);
+        PersonDTO pEdited = FACADE.editPerson(p);
+        return GSON.toJson(pEdited);
     }
 }
