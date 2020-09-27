@@ -2,13 +2,14 @@ package entities;
 
 import java.io.Serializable;
 import java.util.Date;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
 import javax.persistence.Temporal;
-
 
 @Entity
 @NamedQuery(name = "Person.deleteAllRows", query = "DELETE from Person")
@@ -21,13 +22,14 @@ public class Person implements Serializable {
     private String firstName;
     private String lastName;
     private String phone;
+    @ManyToOne(cascade = {CascadeType.PERSIST})
+    private Address address;
+
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date created;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date lastEdited;
-    
-    
-    
+
     public Person() {
     }
 
@@ -37,6 +39,19 @@ public class Person implements Serializable {
         this.phone = phone;
         this.created = created;
         this.lastEdited = lastEdited;
+    }
+
+    public void setAddress(Address address) {
+        if (address != null) {
+            this.address = address;
+            address.addPerson(this);
+        } else {
+            this.address = null;
+        }
+    }
+
+    public Address getAddress() {
+        return address;
     }
 
     public String getFirstName() {
@@ -78,9 +93,7 @@ public class Person implements Serializable {
     public void setLastEdited(Date lastEdited) {
         this.lastEdited = lastEdited;
     }
-    
-    
-        
+
     public Integer getId() {
         return id;
     }
@@ -88,9 +101,5 @@ public class Person implements Serializable {
     public void setId(Integer id) {
         this.id = id;
     }
- 
-    
-    
 
-   
 }
